@@ -38,10 +38,16 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         python -m pip install --upgrade tox
 
+    - name: Set tox env name
+      id: set-tox-env-name
+      shell: python
+      run: |
+        tox_env_name = "py{}".format("${{ matrix.python-version }}".replace(".", ""))
+        print("::set-output name=tox-env-name::{}".format(tox_env_name))
+
     - name: Run tox targets for ${{ matrix.python-version }}
       run: |
-        ENV_PREFIX=$(tr -C -d "0-9" <<< "${{ matrix.python-version }}")
-        TOXENV=$(tox --listenvs | grep "^py$ENV_PREFIX" | tr '\n' ',') tox
+        tox -e ${{ steps.set-tox-env-name.outputs.tox-env-name }}
 
     - name: Upload coverage data
       uses: actions/upload-artifact@v2
