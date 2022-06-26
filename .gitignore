@@ -18,6 +18,7 @@ env-dev
 .ropeproject/
 .tox/
 .idea/
+.vscode
 .cache/
 debian
 debian-upstream/files
