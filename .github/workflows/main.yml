@@ -49,6 +49,12 @@ jobs:
       run: |
         tox -e ${{ steps.set-tox-env-name.outputs.tox-env-name }}
 
+    - name: Run tox targets for ${{ matrix.python-version }} windows with bash
+      if: ${{ matrix.os == 'windows-latest' }}
+      shell: bash
+      run: |
+        tox -e ${{ steps.set-tox-env-name.outputs.tox-env-name }}
+
     - name: Upload coverage data
       uses: actions/upload-artifact@v2
       with:
