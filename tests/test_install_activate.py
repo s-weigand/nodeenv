@@ -19,6 +19,9 @@ else:
         'shim': 'SHIM',
     }
 
+if nodeenv.is_CYGWIN:
+    FILES.update({'activate': 'ACTIVATE_SH'})
+
 
 def fix_content(content, tmpdir):
     if nodeenv.is_WIN:
@@ -37,13 +40,17 @@ def fix_content(content, tmpdir):
     content = content.replace('__BIN_NAME__', bin_name)
     content = content.replace(
         '__MOD_NAME__', os.path.join('lib', 'node_modules'))
-    content = content.replace('__NPM_CONFIG_PREFIX__', '$NODE_VIRTUAL_ENV')
+    if nodeenv.is_CYGWIN is True:
+        content = content.replace('__NPM_CONFIG_PREFIX__',
+                                  str(tmpdir.join(bin_name)))
+    else:
+        content = content.replace('__NPM_CONFIG_PREFIX__', '$NODE_VIRTUAL_ENV')
     return content
 
 
 @pytest.mark.parametrize('name, content_var', FILES.items())
 def test_write(tmpdir, name, content_var):
-    if nodeenv.is_WIN:
+    if nodeenv.is_WIN or nodeenv.is_CYGWIN:
         bin_dir = tmpdir.join('Scripts')
     else:
         bin_dir = tmpdir.join('bin')
@@ -61,7 +68,7 @@ def test_write(tmpdir, name, content_var):
 
 @pytest.mark.parametrize('name, content_var', FILES.items())
 def test_python_virtualenv(tmpdir, name, content_var):
-    if nodeenv.is_WIN:
+    if nodeenv.is_WIN or nodeenv.is_CYGWIN:
         bin_dir = tmpdir.join('Scripts')
     else:
         bin_dir = tmpdir.join('bin')
