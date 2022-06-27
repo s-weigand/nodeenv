@@ -15,9 +15,8 @@ import nodeenv
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 
-WINDOWS_RUNS_IN_BASH = (
-    nodeenv.is_WIN and os.environ.get("SHELL") is not None or nodeenv.is_CYGWIN
-)
+# The SHELL env var is only set when run from a bash like shell on windows
+WINDOWS_RUNS_IN_BASH = (nodeenv.is_WIN and os.environ.get("SHELL") is not None)
 
 
 @pytest.mark.integration
