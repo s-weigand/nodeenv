@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import os.path
+import os
 import pipes
 import subprocess
 import sys
@@ -15,8 +15,16 @@ import nodeenv
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 
+WINDOWS_RUNS_IN_BASH = (
+    nodeenv.is_WIN and os.environ.get("SHELL") is not None or nodeenv.is_CYGWIN
+)
+
 
 @pytest.mark.integration
+@pytest.mark.skipif(
+    WINDOWS_RUNS_IN_BASH is False,
+    reason='None posix like shell on windows'
+)
 def test_smoke(tmpdir):
     nenv_path = tmpdir.join('nenv').strpath
     subprocess.check_call([
@@ -87,6 +95,10 @@ def test_print_node_versions(cap_logging_info):
     assert tabs_per_line == [7] * 60 + [4]
 
 
+@pytest.mark.skipif(
+    nodeenv.is_WIN is True,
+    reason='set_predeactivate_hook does nothing on windows'
+)
 def test_predeactivate_hook(tmpdir):
     # Throw error if the environment directory is not a string
     with pytest.raises((TypeError, AttributeError)):
