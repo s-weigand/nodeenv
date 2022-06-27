@@ -57,6 +57,11 @@ is_PY3 = sys.version_info[0] >= 3
 is_WIN = platform.system() == 'Windows'
 is_CYGWIN = platform.system().startswith(('CYGWIN', 'MSYS'))
 
+if is_PY3 is True:
+    # shutil.which was added in python 3.3
+    # Ref.: https://docs.python.org/3/library/shutil.html#shutil.which
+    is_CYGWIN = is_CYGWIN or shutil.which("sh.exe") is not None
+
 ignore_ssl_certs = False
 
 # ---------------------------------------------------------
@@ -900,6 +905,7 @@ def install_activate(env_dir, args):
         shim_nodejs = join(bin_dir, "nodejs")
     if is_CYGWIN:
         mkdir(bin_dir)
+        files.update({'activate': ACTIVATE_SH})
 
     if args.node == "system":
         files["node"] = SHIM

@@ -33,7 +33,8 @@ def test_smoke(tmpdir):
         '-m', 'nodeenv', '--prebuilt', nenv_path,
     ])
     assert os.path.exists(nenv_path)
-    activate = pipes.quote(os.path.join(nenv_path, 'bin', 'activate'))
+    bin_dir_name = 'Scripts' if WINDOWS_RUNS_IN_BASH is True else 'bin'
+    activate = pipes.quote(os.path.join(nenv_path, bin_dir_name, 'activate'))
     subprocess.check_call([
         'sh', '-c', '. {} && node --version'.format(activate),
     ])
