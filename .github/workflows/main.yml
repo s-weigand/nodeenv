@@ -88,7 +88,7 @@ jobs:
         run: |
           python -m coverage combine
           python -m coverage html --skip-covered --skip-empty
-          python -m coverage report --fail-under=55
+          python -m coverage report --fail-under=54
 
       - name: Upload HTML report
         if: ${{ failure() }}
